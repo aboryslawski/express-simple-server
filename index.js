@@ -5,14 +5,8 @@ const PORT = process.env.PORT || 3300;
 
 server.use(express.static('public'));
 
-server.get('/', async (_req, res) => {
-  try {
-    const response = await axios.get('https://hpjmztojsgsfbln7ibyhxzt2s.js.wpenginepoweredstaging.com/');
-    res.send(response.data);
-  } catch (error) {
-    console.error('Error fetching home URL:', error.message);
-    res.status(500).send('Error fetching content from home URL');
-  }
+server.get('/', (_req, res) => {
+  res.send('Hello Express!');
 });
 
 server.get('/fetch-wordpress-graphql', async (_req, res) => {
