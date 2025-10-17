@@ -1,15 +1,29 @@
 {
   "name": "express-simple-server",
   "version": "1.0.0",
-  "description": "Simple Express Server",
+  "description": "Next.js App with Express API Routes",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
     "wpe-build": "node build.js"
   },
   "author": "Konrad Glowacki <konrad.glowacki@wpengine.com> (wpengine.com)",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1"
+    "axios": "^1.6.0",
+    "next": "14.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.9.0",
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "eslint": "^8.53.0",
+    "eslint-config-next": "14.0.0",
+    "typescript": "^5.2.2"
   }
 }
