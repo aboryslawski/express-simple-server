@@ -6,9 +6,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next build && next start",
     "lint": "next lint",
-    "wpe-build": "node build.js"
+    "wpe-build": "next build"
   },
   "author": "Konrad Glowacki <konrad.glowacki@wpengine.com> (wpengine.com)",
   "license": "ISC",
