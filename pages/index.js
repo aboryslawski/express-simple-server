@@ -4,6 +4,7 @@ export default function Home() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [redirectLogs, setRedirectLogs] = useState([]);
+  const [testUrl, setTestUrl] = useState('');
 
   const fetchData = async (endpoint) => {
     setLoading(true);
@@ -19,11 +20,12 @@ export default function Home() {
     }
   };
 
-  const testRedirectLoop = async () => {
+  const testRedirectLoop = async (url = '') => {
     setLoading(true);
     setRedirectLogs([]);
     try {
-      const response = await fetch('/api/test-redirect-loop');
+      const queryParam = url ? `?url=${encodeURIComponent(url)}` : '';
+      const response = await fetch(`/api/test-redirect-loop${queryParam}`);
       const result = await response.json();
       setRedirectLogs(result.logs || []);
       setData(result);
@@ -53,6 +55,76 @@ export default function Home() {
         >
           Show Environment Variables
         </button>
+      </div>
+
+      {/* URL Testing Section */}
+      <div style={{ marginTop: '20px', padding: '15px', border: '2px solid #ff6b6b', borderRadius: '10px', backgroundColor: '#fff5f5' }}>
+        <h3>🧪 Hypothesis Testing: Redirect Loops</h3>
+        <p><strong>Your Hypothesis:</strong> Setting <code>$frontend_uri</code> to <code>https://hwx0ta7gulbtefguezlgtik6u.js.wpenginepoweredstaging.com/</code> might cause redirect loops.</p>
+        
+        <div style={{ margin: '15px 0' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+            Test URL for redirect loops:
+          </label>
+          <input
+            type="text"
+            placeholder="Enter any URL to test for redirect loops..."
+            style={{ 
+              width: '500px', 
+              padding: '10px', 
+              borderRadius: '5px', 
+              border: '1px solid #ccc',
+              marginRight: '10px'
+            }}
+            value={testUrl}
+            onChange={(e) => setTestUrl(e.target.value)}
+          />
+        </div>
+        
+        <div style={{ margin: '10px 0' }}>
+          <button 
+            onClick={() => testRedirectLoop(testUrl)}
+            style={{ 
+              marginRight: '10px', 
+              padding: '12px 20px', 
+              backgroundColor: '#ff6b6b', 
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+          >
+            🔄 Test for Redirect Loops
+          </button>
+          
+          <button 
+            onClick={() => {
+              setTestUrl('https://hwx0ta7gulbtefguezlgtik6u.js.wpenginepoweredstaging.com/');
+              testRedirectLoop('https://hwx0ta7gulbtefguezlgtik6u.js.wpenginepoweredstaging.com/');
+            }}
+            style={{ 
+              marginRight: '10px', 
+              padding: '12px 20px', 
+              backgroundColor: '#4CAF50', 
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer'
+            }}
+          >
+            🎯 Test Your Frontend URL
+          </button>
+        </div>
+        
+        <div style={{ fontSize: '14px', color: '#666', marginTop: '10px' }}>
+          <strong>💡 What this tests:</strong>
+          <ul style={{ margin: '5px 0', paddingLeft: '20px' }}>
+            <li>Follows redirect chains and detects loops</li>
+            <li>Looks for <code>X-Redirect-By: WP Engine Headless plugin</code> headers (FaustWP signatures)</li>
+            <li>Shows you the exact redirect path to identify problems</li>
+          </ul>
+        </div>
         
         <button 
           onClick={testRedirectLoop}

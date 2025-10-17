@@ -4,25 +4,31 @@ export default async function handler(req, res) {
   const logs = [];
   const maxRedirects = 10; // Prevent infinite loops
   
-  // Try to determine the WordPress URL from environment variables
-  let currentUrl = process.env.WORDPRESS_URL;
+  // Allow testing any URL via query parameter, or use configured WordPress URL
+  let currentUrl = req.query.url;
   
-  // If no direct WordPress URL, try to derive from GraphQL API URL
-  if (!currentUrl && process.env.GRAPHQL_API_URL) {
-    currentUrl = process.env.GRAPHQL_API_URL.replace('/graphql', '');
+  if (!currentUrl) {
+    // Try to determine the WordPress URL from environment variables
+    currentUrl = process.env.WORDPRESS_URL;
+    
+    // If no direct WordPress URL, try to derive from GraphQL API URL
+    if (!currentUrl && process.env.GRAPHQL_API_URL) {
+      currentUrl = process.env.GRAPHQL_API_URL.replace('/graphql', '');
+    }
   }
   
-  // If still no URL, return error with helpful message
+  // If still no URL, provide guidance but allow testing with a default
   if (!currentUrl || currentUrl === 'https://your-wordpress-site.com') {
     return res.status(400).json({
       success: false,
-      error: 'WordPress URL not configured',
-      message: 'Please set WORDPRESS_URL or GRAPHQL_API_URL environment variable',
+      error: 'No URL to test',
+      message: 'Please provide a URL to test for redirect loops',
+      usage: 'Add ?url=https://your-site.com to test any URL, or set WORDPRESS_URL/GRAPHQL_API_URL environment variables',
       availableEnvs: {
         WORDPRESS_URL: process.env.WORDPRESS_URL || 'not set',
         GRAPHQL_API_URL: process.env.GRAPHQL_API_URL || 'not set'
       },
-      suggestion: 'Try clicking "Show Environment Variables" button first to see what URLs are configured'
+      example: 'Try: /api/test-redirect-loop?url=https://hwx0ta7gulbtefguezlgtik6u.js.wpenginepoweredstaging.com'
     });
   }
 
