@@ -3,13 +3,27 @@ import axios from 'axios';
 export default async function handler(req, res) {
   const logs = [];
   const maxRedirects = 10; // Prevent infinite loops
-  let currentUrl = process.env.WORDPRESS_URL || 'https://your-wordpress-site.com';
   
-  // If no WordPress URL is set, try to infer from GraphQL API URL
+  // Try to determine the WordPress URL from environment variables
+  let currentUrl = process.env.WORDPRESS_URL;
+  
+  // If no direct WordPress URL, try to derive from GraphQL API URL
+  if (!currentUrl && process.env.GRAPHQL_API_URL) {
+    currentUrl = process.env.GRAPHQL_API_URL.replace('/graphql', '');
+  }
+  
+  // If still no URL, return error with helpful message
   if (!currentUrl || currentUrl === 'https://your-wordpress-site.com') {
-    if (process.env.GRAPHQL_API_URL) {
-      currentUrl = process.env.GRAPHQL_API_URL.replace('/graphql', '');
-    }
+    return res.status(400).json({
+      success: false,
+      error: 'WordPress URL not configured',
+      message: 'Please set WORDPRESS_URL or GRAPHQL_API_URL environment variable',
+      availableEnvs: {
+        WORDPRESS_URL: process.env.WORDPRESS_URL || 'not set',
+        GRAPHQL_API_URL: process.env.GRAPHQL_API_URL || 'not set'
+      },
+      suggestion: 'Try clicking "Show Environment Variables" button first to see what URLs are configured'
+    });
   }
 
   try {

@@ -176,6 +176,14 @@ export default function Home() {
         <p>Your frontend URL: <code>https://hwx0ta7gulbtefguezlgtik6u.js.wpenginepoweredstaging.com/</code></p>
         <p>Looking for header: <code>X-Redirect-By: WP Engine Headless plugin</code></p>
         
+        <div style={{ backgroundColor: '#fff3cd', padding: '10px', borderRadius: '5px', margin: '10px 0', border: '1px solid #ffeaa7' }}>
+          <strong>⚠️ Important:</strong> Make sure to configure your WordPress URL first!
+          <br />
+          Click "Show Environment Variables" to see your current configuration.
+          <br />
+          The test needs either <code>WORDPRESS_URL</code> or <code>GRAPHQL_API_URL</code> to work properly.
+        </div>
+        
         <h3>Available Endpoints:</h3>
         <ul>
           <li><code>/api/</code> - Proxy to home URL</li>

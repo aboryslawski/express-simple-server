@@ -4,7 +4,25 @@ export default async function handler(req, res) {
   const { path = '', method = 'GET' } = req.query;
   
   // Build the WordPress URL to test
-  let wordpressUrl = process.env.WORDPRESS_URL || process.env.GRAPHQL_API_URL?.replace('/graphql', '') || 'https://your-wordpress-site.com';
+  let wordpressUrl = process.env.WORDPRESS_URL;
+  
+  // If no direct WordPress URL, try to derive from GraphQL API URL
+  if (!wordpressUrl && process.env.GRAPHQL_API_URL) {
+    wordpressUrl = process.env.GRAPHQL_API_URL.replace('/graphql', '');
+  }
+  
+  // If still no URL, return error with helpful message
+  if (!wordpressUrl) {
+    return res.status(400).json({
+      success: false,
+      error: 'WordPress URL not configured',
+      message: 'Please set WORDPRESS_URL or GRAPHQL_API_URL environment variable',
+      availableEnvs: {
+        WORDPRESS_URL: process.env.WORDPRESS_URL || 'not set',
+        GRAPHQL_API_URL: process.env.GRAPHQL_API_URL || 'not set'
+      }
+    });
+  }
   
   if (path) {
     wordpressUrl = `${wordpressUrl.replace(/\/$/, '')}/${path.replace(/^\//, '')}`;
